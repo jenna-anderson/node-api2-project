@@ -70,7 +70,7 @@ router.put('/:id', async (req, res) => {
     } else {
         try {
             const count = await Posts.update(id, { title, contents })
-            if (count == 1) {
+            if (count === 1) {
                 const updatedPost = await Posts.findById(id)
                 res.status(200).json(updatedPost);
             } else {
@@ -85,5 +85,26 @@ router.put('/:id', async (req, res) => {
         }
     }
 })
+
+// [DELETE] deletes post by id and returns deleted post
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deletedPost = await Posts.findById(id)
+        const count = await Posts.remove(id)
+        if (count === 1) {
+            res.status(200).json(deletedPost)
+        } else {
+            res.status(404).json({
+                message: "The post with the specified ID does not exist"
+            })
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: "The post could not be removed"
+        })
+    }
+})
+
 
 module.exports = router;
